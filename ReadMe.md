@@ -8,6 +8,11 @@ This AI coach is going to watch your replay and give advices. It will tell what 
  
  ・Build proto type to prove that my theory is possible. 
 
+# Progress
+ ・ Went to Amazon AWS to learn and get some ideas about my project. I had a chance to do lab about making AI that answers questions.
+
+ ・Listened to my friend's presentation about building own chat GPT. Got some educational resources that I can use. 
+
 
 
 
