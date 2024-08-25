@@ -27,7 +27,10 @@ Damage output- Each moves do diffferent damage. This math is required for the be
 # Progress
  ・ Went to Amazon AWS to learn and get some ideas about my project. I had a chance to do lab about making AI that answers questions.
 
- ・Listened to my friend's presentation about building own chat GPT. Got some educational resources that I can use. 
+ ・Made my own chatGPT to deepen my understand about AI. Reference- https://youtu.be/kCc8FmEb1nY?si=3fh00REh3R-VRhPj
+I still don't understand some materals, but I will cover them by taking machine learning class this semester. 
+
+
 
 
 
