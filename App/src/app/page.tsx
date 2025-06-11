@@ -1,114 +1,79 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function App() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Define the API URL
+  // Define the API URL and authentication
   const LANGFLOW_URL = "http://127.0.0.1:7860/api/v1/run/3c79f16f-713f-465f-bdf4-ed80f46e0f30";
-
-  // Test the API connection on component mount
-  useEffect(() => {
-    const testConnection = async () => {
-      const testPayload = {
-        input_value: "test",
-        output_type: "chat",
-        input_type: "chat",
-        session_id: "user_1"
-      };
-
-      try {
-        console.log('Testing API with payload:', testPayload);
-        const response = await fetch(LANGFLOW_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(testPayload)
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Test response received:', data);
-      } catch (error) {
-        console.error('API test failed:', error);
-      }
-    };
-
-    testConnection();
-  }, []);
+  const API_KEY = process.env.NEXT_PUBLIC_LANGFLOW_API_KEY || "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message to chat
     setMessages(prev => [...prev, { text: input, isUser: true }]);
     setIsLoading(true);
 
     const payload = {
       input_value: input,
       output_type: "chat",
-      input_type: "chat",
-      session_id: "user_1"
+      input_type: "chat"
     };
 
     try {
-      console.log('Sending payload:', JSON.stringify(payload, null, 2));
-      
       const response = await fetch(LANGFLOW_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`
         },
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response not OK:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText
-        });
-        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const rawResponse = await response.text();
-      console.log('Raw response text:', rawResponse);
-
-      let data;
+      let data: any;
+      
       try {
         data = JSON.parse(rawResponse);
-        console.log('Parsed response:', data);
       } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        console.log('Raw response that failed to parse:', rawResponse);
         throw new Error('Failed to parse response as JSON');
       }
 
-      // Handle the response based on its structure
-      let aiMessage: string;
-      if (typeof data === 'string') {
-        aiMessage = data;
-      } else if (data.result) {
-        aiMessage = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
-      } else if (data.response) {
-        aiMessage = typeof data.response === 'string' ? data.response : JSON.stringify(data.response);
-      } else {
-        console.log('Unexpected response structure:', data);
-        aiMessage = "Received response but couldn't parse it properly. Check console for details.";
-      }
+      const extractMessage = (data: any): string => {
+        // If data is already a string, return it
+        if (typeof data === 'string') return data;
 
+        // Check Langflow response paths
+        const paths = [
+          data?.outputs?.[0]?.outputs?.[0]?.messages?.[0]?.message,
+          data?.outputs?.[0]?.outputs?.[0]?.results?.message?.text,
+          data?.outputs?.[0]?.outputs?.[0]?.artifacts?.message,
+          data?.result,
+          data?.response
+        ];
+
+        // Return the first valid message found
+        for (const path of paths) {
+          if (path) {
+            return typeof path === 'string' ? path : JSON.stringify(path);
+          }
+        }
+
+        return "Could not extract message from response.";
+      };
+
+      const aiMessage = extractMessage(data);
       setMessages(prev => [...prev, { text: aiMessage, isUser: false }]);
+
     } catch (error) {
-      console.error('Error in API call:', error);
       setMessages(prev => [...prev, { 
         text: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`, 
         isUser: false 
