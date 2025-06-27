@@ -39,32 +39,40 @@ export default function App() {
       }
 
       const rawResponse = await response.text();
-      let data: any;
+      let data: unknown;
       
       try {
         data = JSON.parse(rawResponse);
-      } catch (parseError) {
+      } catch {
         throw new Error('Failed to parse response as JSON');
       }
 
-      const extractMessage = (data: any): string => {
+      const extractMessage = (data: unknown): string => {
         // If data is already a string, return it
         if (typeof data === 'string') return data;
 
-        // Check Langflow response paths
-        const paths = [
-          data?.outputs?.[0]?.outputs?.[0]?.messages?.[0]?.message,
-          data?.outputs?.[0]?.outputs?.[0]?.results?.message?.text,
-          data?.outputs?.[0]?.outputs?.[0]?.artifacts?.message,
-          data?.result,
-          data?.response
-        ];
+        // Use any for complex nested access, wrapped in try-catch
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const dataObj = data as any;
+          
+          // Check Langflow response paths
+          const paths = [
+            dataObj?.outputs?.[0]?.outputs?.[0]?.messages?.[0]?.message,
+            dataObj?.outputs?.[0]?.outputs?.[0]?.results?.message?.text,
+            dataObj?.outputs?.[0]?.outputs?.[0]?.artifacts?.message,
+            dataObj?.result,
+            dataObj?.response
+          ];
 
-        // Return the first valid message found
-        for (const path of paths) {
-          if (path) {
-            return typeof path === 'string' ? path : JSON.stringify(path);
+          // Return the first valid message found
+          for (const path of paths) {
+            if (path) {
+              return typeof path === 'string' ? path : JSON.stringify(path);
+            }
           }
+        } catch {
+          // If any access fails, fall through to default message
         }
 
         return "Could not extract message from response.";
