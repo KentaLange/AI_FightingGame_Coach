@@ -10,8 +10,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Define the API URL and authentication
-  const LANGFLOW_URL = "http://127.0.0.1:7860/api/v1/run/3c79f16f-713f-465f-bdf4-ed80f46e0f30";
-  const API_KEY = "sk-BLp5L6mwQHHo8yJQ6cU3r5vxte5g_K08zmshHjRh3pQ";
+  const LANGFLOW_URL = "https://api.langflow.astra.datastax.com/lf/5328b3f9-d677-4b5c-bc18-203f4a203549/api/v1/run/976b9e4d-bab5-437b-a3b9-a77c15116f6c";
+  const API_KEY = process.env.NEXT_PUBLIC_LANGFLOW_API_KEY;
   
   
 
