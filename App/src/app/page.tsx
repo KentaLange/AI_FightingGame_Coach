@@ -4,7 +4,7 @@ import { useState } from "react";
 
 
 export default function App() {
-  const projectDir = process.cwd()
+  //const projectDir = process.cwd()
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [isLoading, setIsLoading] = useState(false);
