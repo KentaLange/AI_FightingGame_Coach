@@ -1,15 +1,19 @@
 'use client';
-
 import { useState } from "react";
 
+
+
 export default function App() {
+  const projectDir = process.cwd()
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Define the API URL and authentication
   const LANGFLOW_URL = "http://127.0.0.1:7860/api/v1/run/3c79f16f-713f-465f-bdf4-ed80f46e0f30";
-  const API_KEY = process.env.NEXT_PUBLIC_LANGFLOW_API_KEY || "";
+  const API_KEY = "sk-BLp5L6mwQHHo8yJQ6cU3r5vxte5g_K08zmshHjRh3pQ";
+  
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
