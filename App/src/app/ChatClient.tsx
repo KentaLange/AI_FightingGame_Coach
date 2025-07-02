@@ -10,6 +10,13 @@ export default function ChatClient() {
   const LANGFLOW_URL = process.env.NEXT_PUBLIC_LANGFLOW_URL;
   const API_KEY = process.env.NEXT_PUBLIC_LANGFLOW_API_KEY;
 
+  /*if (!LANGFLOW_URL) {
+    throw new Error("NEXT_PUBLIC_LANGFLOW_URL environment variable is not set.");
+  }
+  if (!API_KEY) {
+    throw new Error("NEXT_PUBLIC_LANGFLOW_API_KEY environment variable is not set.");
+  }*/
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
