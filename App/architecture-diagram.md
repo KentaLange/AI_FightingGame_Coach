@@ -16,7 +16,7 @@ graph TB
 
       subgraph "External AI Services"
           H[Langflow API<br/>127.0.0.1:7860]
-          I[@datastax/langflow-client<br/>NPM Package]
+          I[DataStax Langflow Client<br/>NPM Package]
       end
 
       subgraph "Backend Data Layer (Python)"
