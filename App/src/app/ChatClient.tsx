@@ -6,10 +6,6 @@ export default function ChatClient() {
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Define the API URL and authentication
-  const LANGFLOW_URL = process.env.NEXT_PUBLIC_LANGFLOW_URL;
-  const API_KEY = process.env.NEXT_PUBLIC_LANGFLOW_API_KEY;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -17,58 +13,28 @@ export default function ChatClient() {
     setMessages(prev => [...prev, { text: input, isUser: true }]);
     setIsLoading(true);
 
-    const payload = {
-      input_value: input,
-      output_type: "chat",
-      input_type: "chat"
-    };
-
     try {
-      const response = await fetch(LANGFLOW_URL, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          input_value: input
+        })
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const rawResponse = await response.text();
-      let data: unknown;
-      
-      try {
-        data = JSON.parse(rawResponse);
-      } catch {
-        throw new Error('Failed to parse response as JSON');
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      const extractMessage = (data: unknown): string => {
-        if (typeof data === 'string') return data;
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const dataObj = data as any;
-          const paths = [
-            dataObj?.outputs?.[0]?.outputs?.[0]?.messages?.[0]?.message,
-            dataObj?.outputs?.[0]?.outputs?.[0]?.results?.message?.text,
-            dataObj?.outputs?.[0]?.outputs?.[0]?.artifacts?.message,
-            dataObj?.result,
-            dataObj?.response
-          ];
-          for (const path of paths) {
-            if (path) {
-              return typeof path === 'string' ? path : JSON.stringify(path);
-            }
-          }
-        } catch {}
-        return "Could not extract message from response.";
-      };
-
-      const aiMessage = extractMessage(data);
-      setMessages(prev => [...prev, { text: aiMessage, isUser: false }]);
+      setMessages(prev => [...prev, { text: data.message, isUser: false }]);
 
     } catch (error) {
       setMessages(prev => [...prev, { 
