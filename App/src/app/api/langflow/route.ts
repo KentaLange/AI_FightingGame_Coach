@@ -1,4 +1,3 @@
-// src/app/api/langflow/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -19,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await fetch(LANGFLOW_URL, {
-        method: 'POST',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`
@@ -27,9 +26,15 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(payload)
     });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
     return NextResponse.json({ data });
   } catch (error) {
-    return NextResponse.json({ error: 'Langflow request failed' }, { status: 500 });
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Langflow request failed' 
+    }, { status: 500 });
   }
-}
+} 
