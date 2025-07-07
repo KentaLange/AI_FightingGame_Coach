@@ -15,7 +15,7 @@ graph TB
       end
 
       subgraph "External AI Services"
-          H[Langflow API<br/>127.0.0.1:7860]
+          H[Langflow API<br/>]
           I[DataStax Langflow Client<br/>NPM Package]
       end
 
