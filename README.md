@@ -30,6 +30,42 @@ Damage output- Each moves do diffferent damage. This math is required for the be
  ・Made my own chatGPT to deepen my understand about AI. Reference- https://youtu.be/kCc8FmEb1nY?si=3fh00REh3R-VRhPj
 I still don't understand some materals, but I will cover them by taking machine learning class this semester. 
 
+# How to Run the Application
+
+This project uses a `Makefile` to simplify the process of building, running, and cleaning up the application.
+
+### Prerequisites
+
+*   [Podman](https://podman.io/getting-started/installation)
+
+### Running the Application
+
+1.  **Build the container images:**
+    ```bash
+    make build
+    ```
+
+2.  **Run the application:**
+    ```bash
+    make run
+    ```
+    This will start the `webserver` and `langflow` containers. The webserver will be available at `http://localhost:8080` and langflow at `http://localhost:7860`.
+
+3.  **Run with a specific environment:**
+    You can specify an environment (e.g., `dev`, `qa`, `prod`) by using the `env` variable. This will load the corresponding `.env` file (e.g., `.env.dev`).
+    ```bash
+    make run env=dev
+    ```
+
+### Cleaning Up
+
+To stop the containers and remove the built images, run the following command:
+```bash
+make clean
+```
+
+This will stop and remove the containers and then remove the container images. 
+
 
 
 
