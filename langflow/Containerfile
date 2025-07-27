@@ -7,7 +7,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # FIXME: DO_NOT_TRACK=true
 # Copy the project into the image
 WORKDIR /app/flows
-COPY *.json /app/flows/
+COPY flows/*.json /app/flows/
 ENV LANGFLOW_LOAD_FLOWS_PATH=/app/flows
 WORKDIR /app
 ADD uv.lock /app
@@ -27,4 +27,4 @@ EXPOSE 8080
 #USER 1001
 
 # Start the application
-CMD ["/bin/sh","-c",".",".venv/bin/activate","&&","uv","run", "langflow","run"]
+CMD ["uv","run", "langflow","run"]
