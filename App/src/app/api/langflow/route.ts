@@ -32,9 +32,9 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json({ data });
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json({ 
-      error: err instanceof Error ? err.message : 'Langflow request failed' 
+      error: error instanceof Error ? error.message : 'Langflow request failed' 
     }, { status: 500 });
   }
 } 
