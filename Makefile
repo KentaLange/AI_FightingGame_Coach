@@ -10,8 +10,12 @@ env ?=
 # Determine the .env file to use
 ifneq ($(env),)
     ENV_FILE = .env.$(env)
+    ifneq ($(env), dev)
+     APP_ENV = $(env)
+    endif
 else
     ENV_FILE = .env
+    APP_ENV = dev
 endif
 
 # Check if the .env file exists
@@ -35,8 +39,8 @@ list:
 
 # Build targets
 build:
-	cd webserver && podman build -t$(WEB_IMAGE_NAME) -f Containerfile .
-	cd langflow && podman build -t$(LANGFLOW_IMAGE_NAME) -f Containerfile .
+	cd webserver && podman build --build-arg APP_ENV=$(APP_ENV) -t $(WEB_IMAGE_NAME) -f Containerfile .
+	cd langflow && podman build -t $(LANGFLOW_IMAGE_NAME) -f Containerfile .
 
 # Run target to start containers
 test:
