@@ -11,6 +11,7 @@ RUN npm install -g bun
 # Copy application source
 # Copy package files
 ADD app/package*.json ./
+RUN bun install
 
 COPY app/src ./src
 COPY app/public ./public
@@ -21,7 +22,6 @@ COPY app/eslint.config.mjs ./
 #COPY app/tailwind.config.js ./
 COPY app/postcss.config.mjs ./
 
-RUN bun install
 
 USER root
 RUN chown -R 1001:0 /opt/app-root/app
@@ -29,7 +29,7 @@ USER 1001
 RUN ls -l /opt/app-root/app
 # Build the Next.js application
 
-RUN bun run build
+#RUN bun run build
 RUN bun next telemetry disable
 # Remove source files to keep image lean
 #RUN rm -rf src && \
