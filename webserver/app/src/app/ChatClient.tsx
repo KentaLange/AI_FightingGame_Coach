@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import { useState } from "react";
 
 function extractMessage(data: unknown): string {
-  if (typeof data === 'string') return data;
+  if (typeof data === "string") return data;
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dataObj = data as any;
@@ -11,11 +11,11 @@ function extractMessage(data: unknown): string {
       dataObj?.outputs?.[0]?.outputs?.[0]?.results?.message?.text,
       dataObj?.outputs?.[0]?.outputs?.[0]?.artifacts?.message,
       dataObj?.result,
-      dataObj?.response
+      dataObj?.response,
     ];
     for (const path of paths) {
       if (path) {
-        return typeof path === 'string' ? path : JSON.stringify(path);
+        return typeof path === "string" ? path : JSON.stringify(path);
       }
     }
   } catch {}
@@ -24,20 +24,22 @@ function extractMessage(data: unknown): string {
 
 export default function ChatClient() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
+  const [messages, setMessages] = useState<
+    Array<{ text: string; isUser: boolean }>
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    setMessages(prev => [...prev, { text: input, isUser: true }]);
+    setMessages((prev) => [...prev, { text: input, isUser: true }]);
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/langflow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/langflow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input }),
       });
 
@@ -48,12 +50,15 @@ export default function ChatClient() {
       }
 
       const aiMessage = extractMessage(data);
-      setMessages(prev => [...prev, { text: aiMessage, isUser: false }]);
+      setMessages((prev) => [...prev, { text: aiMessage, isUser: false }]);
     } catch (error) {
-      setMessages(prev => [...prev, { 
-        text: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`, 
-        isUser: false 
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: `Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`,
+          isUser: false,
+        },
+      ]);
     } finally {
       setIsLoading(false);
       setInput("");
@@ -103,4 +108,4 @@ export default function ChatClient() {
       </form>
     </>
   );
-} 
+}

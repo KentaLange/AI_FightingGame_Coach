@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
   const API_KEY = process.env.LANGFLOW_API_KEY;
 
   if (!LANGFLOW_URL || !API_KEY) {
-    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+    console.log("Langflow URL or API Key not defined, bailing.");
+    return NextResponse.json({ error: 'Configuration Variables Not Defined misconfiguration' }, { status: 500 });
   }
 
   const payload = {
@@ -15,7 +16,11 @@ export async function POST(req: NextRequest) {
     output_type: "chat",
     input_type: "chat"
   };
-
+  console.log("--------------------------------");
+  console.log("Connecting to Langflow");
+  console.log("--------------------------------");
+  console.log(payload);
+  console.log(LANGFLOW_URL);
   try {
     const response = await fetch(LANGFLOW_URL, {
       method: 'POST',
@@ -27,6 +32,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
+      console.log("Langflow request failed with status: ", response.status);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
